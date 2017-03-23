@@ -1,0 +1,90 @@
+---
+title: "Case Study 1"
+author: "Ryan Khaleghi"
+date: "3/22/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#set working directory
+setwd("/Users/Ryan/Desktop/Programming/SMU/Doing Data Science/Case-Study-1")
+
+#this section gathers the data from 2 csv files
+source ("gather.r")
+
+#this section cleans up the data by changing column names and merging the two files
+suppressWarnings(source ("tidy.r"))
+
+```
+
+Introduction
+
+The Organization for Economic Co-operation and Development (OECD) and FedStats both collect extensive economic data about countries around the world. We can use this data to perform an analysis of different countries and compare their Gross Domestic Products (GDP).
+
+Analysis
+
+Using the FedStats and OECD data, we can rank the countries of the world by GDP, from highest (rank 1) to lowest. Due to various issues, such as the availability of data and small country size, some countries are not ranked. We see that 
+
+```{r}
+#for question 1, count the number of items that have a matching country code. since everything in the GDP file has a ranking and we can use this to count the missing items. if Ranking is blank, the country code didn't match.
+i=1
+count = 0
+for (i in 1:x){
+  if (total$Ranking[i] == ""){
+    count = count + 1
+  }
+}
+#answer to  question 1, 35
+print (count)
+```
+countries do not have a ranking in our analysis.
+
+We then sorted the countries by GDP, from lowest to highest, to determine the 13th country (or 13th lowest GDP) on the list. The result is the small 2-island nation of
+```{r}
+source ("tidy2.r")
+
+#answer to  question 2, KNA St. Kitts and Nevis
+print(total$CountryName[13])
+```
+
+The OECD compiles data of its member countries, but other countries as well. Many high income countries are part of the OECD, which some would say has contributed to their high income. Not all high income countries are, however, so we performed an analysis of the high income OECD and non-OECD countries and calculated their mean GDP ranking. The result is that non-OECD countries have a mean rank of 92 and OECD countries have a mean rank of 33. OECD countries have a mean GDP ranking lower than those of non-OECD countries.
+
+```{r}
+#for question 3, create two new vectors for the high income: OECD and high income: non-OECD items, then get averages
+source ("question3.r") 
+
+#non OECD has a lot of missing rankings, so I'm going to use na.rm to not count them in the mean
+#answer to question 3, 91.91304 for non OECD, 32.9667 for OECD
+print(mean(hiNonOECD, na.rm=TRUE))
+print(mean(hiOECD, na.rm=TRUE))
+```
+
+Since we have this data on rankings, we plotted the GDP vs Ranking for all the countries that had a rank (excluding the 35 without a rank). We can see from the graph below that some of the low ranking countries, such as the United States, have such high GDPs compared to other countries that it heavily skews the graph.
+```{r}
+#question 4, plot the GDP for all countries
+source ("question4.r") 
+
+gg
+
+#convert scale for GDP to log10 so it's more clear, if desired
+#gg + scale_x_log10()
+```
+
+
+Besides the OECD GDP rankings, we can do our own analysis of GDP rankings. We divided the GDPs into 5 quantiles, with Q1 being the lowest and Q5 being the highest. We then performed a comparative analysis of all of the countries with their quantile rankings versus their OECD ranking, as shown in the table below. This shows that 5 countries that are considered "Lower middle income" by OECD are in the highest 5th quantile of GDP.
+
+```{r}
+#question 5, answer is 5 countries
+
+source ("question5.r")
+table5
+```
+
+Conclusion
+
+In conclusion, we can see that there is a lot of analysis available using GDP data from various sources. We see that between the OECD and FedStats data there are 35 countries and groupings that have no match. We also see that the 13th lowest GDP is the islands of St. Kitts and Nevis. We have shown that the GDP ranking of non-OECD countries is higher (worse) than that of OECD countries. And finally, we see that 5 countries that the OECD classifies as "lower middle income" are in the highest 5th quantile of income.
